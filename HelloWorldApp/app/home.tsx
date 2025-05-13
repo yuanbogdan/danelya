@@ -1,55 +1,10 @@
 import React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
 import CourseCard from '../components/CourseCard';
 
 export default function HomeScreen() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState('trending');
-  const [showCertified, setShowCertified] = useState(false);
-  const [showFree, setShowFree] = useState(false);
-
   const allCourses = [
-    // {
-    //   id: 1,
-    //   title: '"Поколение Python": алгоритмы и структуры данных для начинающих',
-    //   author: 'Тимур Гуев, Школа BEEGEEK',
-    //   price: 5900,
-    //   oldPrice: 6900,
-    //   rating: 5,
-    //   students: 943,
-    //   duration: '62 ч',
-    //   image: require('../assets/images/python-course.png'),
-    //   hasCertificate: true,
-    //   isNew: false,
-    //   isTrending: true,
-    // },
-    // {
-    //   id: 2,
-    //   title: 'C#: Микросервисы, CQRS, Event Sourcing',
-    //   author: 'Сергей Каменецкий',
-    //   price: 15000,
-    //   rating: 4.8,
-    //   students: 15,
-    //   duration: '14 ч',
-    //   image: require('../assets/images/csharp-course.png'),
-    //   hasCertificate: true,
-    //   isNew: false,
-    //   isTrending: true,
-    // },
-    // {
-    //   id: 3,
-    //   title: 'Бизнес аналитик в IT с Нуля до Специалиста',
-    //   author: 'Михаил Кулешов',
-    //   price: 3790,
-    //   rating: 4.8,
-    //   students: 2100,
-    //   duration: '13 ч',
-    //   image: require('../assets/images/business-course.png'),
-    //   hasCertificate: true,
-    //   isNew: false,
-    //   isTrending: true,
-    // },
     {
       id: 1,
       title: 'Космос: Безграничная Пустота и Бесконечные Возможности',
@@ -117,20 +72,44 @@ export default function HomeScreen() {
     },
   ];
 
-  const filteredCourses = allCourses.filter(course => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredResults, setFilteredResults] = useState<typeof allCourses>(allCourses);
+  const [activeTab, setActiveTab] = useState('trending');
+  const [showCertified, setShowCertified] = useState(false);
+  const [showFree, setShowFree] = useState(false);
+
+  useEffect(() => {
+    const filtered = allCourses.filter(course => {
+      const searchLower = searchQuery.toLowerCase();
+      return searchQuery === '' || 
+        course.title.toLowerCase().includes(searchLower) ||
+        course.author.toLowerCase().includes(searchLower);
+    });
+    setFilteredResults(filtered);
+  }, [searchQuery]);
+
+  const filteredCourses = filteredResults.filter(course => {
+    // Фильтрация по сертификатам
     if (showCertified && !course.hasCertificate) return false;
+    
+    // Фильтрация по бесплатным курсам
     if (showFree && course.price !== 0) return false;
     
+    // Фильтрация по вкладкам
+    let matchesTab = true;
     switch (activeTab) {
       case 'trending':
-        return course.isTrending;
+        matchesTab = course.isTrending;
+        break;
       case 'new':
-        return course.isNew;
+        matchesTab = course.isNew;
+        break;
       case 'hits':
-        return course.students > 1000;
-      default:
-        return true;
+        matchesTab = course.students > 1000;
+        break;
     }
+
+    return matchesTab;
   });
 
   const Header = () => (
@@ -141,9 +120,15 @@ export default function HomeScreen() {
           placeholder="Название курса, автор или предмет"
           value={searchQuery}
           onChangeText={setSearchQuery}
+          placeholderTextColor="#999"
         />
-        <TouchableOpacity style={styles.searchButton}>
-          <Text style={styles.searchButtonText}>Искать</Text>
+        <TouchableOpacity 
+          style={styles.searchButton}
+          onPress={() => setSearchQuery('')}
+        >
+          <Text style={styles.searchButtonText}>
+            {searchQuery ? 'Очистить' : 'Искать'}
+          </Text>
         </TouchableOpacity>
       </View>
       
@@ -211,6 +196,13 @@ export default function HomeScreen() {
         ListHeaderComponent={Header}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>
+              {searchQuery ? 'Курсы не найдены' : 'Нет доступных курсов'}
+            </Text>
+          </View>
+        )}
       />
     </SafeAreaView>
   );
@@ -238,6 +230,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     height: 40,
+    color: '#333',
   },
   searchButton: {
     backgroundColor: '#2D6A4F',
@@ -248,39 +241,38 @@ const styles = StyleSheet.create({
   },
   searchButtonText: {
     color: '#fff',
+    fontSize: 14,
     fontWeight: '600',
-    fontSize: 15,
   },
   filtersContent: {
     paddingHorizontal: 16,
-    paddingBottom: 8,
-    gap: 6,
-    flexDirection: 'row',
+    paddingVertical: 8,
+    gap: 8,
   },
   filterButton: {
     backgroundColor: '#f5f5f5',
-    borderRadius: 16,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
   },
   filterButtonText: {
-    color: '#333',
-    fontSize: 13,
+    color: '#666',
+    fontSize: 14,
   },
   filterCheckbox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 16,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
-  },
-  filterText: {
-    color: '#666',
-    fontSize: 13,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#eee',
   },
   activeFilter: {
     backgroundColor: '#2D6A4F',
+    borderColor: '#2D6A4F',
+  },
+  filterText: {
+    color: '#666',
+    fontSize: 14,
   },
   activeFilterText: {
     color: '#fff',
@@ -288,23 +280,33 @@ const styles = StyleSheet.create({
   tabs: {
     flexDirection: 'row',
     paddingHorizontal: 16,
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-    gap: 20,
+    borderBottomColor: '#eee',
   },
   tab: {
+    paddingHorizontal: 16,
     paddingVertical: 8,
+    marginRight: 8,
+    borderRadius: 8,
   },
   activeTab: {
-    borderBottomWidth: 2,
-    borderBottomColor: '#2D6A4F',
+    backgroundColor: '#2D6A4F',
   },
   tabText: {
     color: '#666',
     fontSize: 14,
+    fontWeight: '500',
   },
   activeTabText: {
-    color: '#2D6A4F',
-    fontWeight: '600',
+    color: '#fff',
   },
-}); 
+  emptyContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#666',
+    fontSize: 16,
+  },
+});
