@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     image: {
-        width: width - 32,
-        height: (width - 32) * 0.6,
+        width: '100%',
+        height: (width - 32) * 0.5,
         borderRadius: 12,
         marginBottom: 20,
     },
