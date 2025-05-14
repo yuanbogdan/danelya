@@ -56,32 +56,7 @@ export default function LoginScreen() {
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
 
-        <View style={styles.socialLogin}>
-          <Text style={styles.socialText}>Or login with</Text>
-          <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image 
-                source={require('../assets/images/facebook.png')} 
-                style={styles.socialIcon} 
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image 
-                source={require('../assets/images/google.png.webp')} 
-                style={styles.socialIcon} 
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Image 
-                source={require('../assets/images/apple.png')} 
-                style={styles.socialIcon} 
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have account? </Text>

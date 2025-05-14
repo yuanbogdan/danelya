@@ -7,7 +7,7 @@ export default function SignupScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [phone, setPhone] = useState('');
+  const [login, setLogin] = useState('');
 
   return (
     <View style={styles.container}>
@@ -45,9 +45,9 @@ export default function SignupScreen() {
         />
         <TextInput
           style={styles.input}
-          placeholder="Phone"
-          value={phone}
-          onChangeText={setPhone}
+          placeholder="Login"
+          value={login}
+          onChangeText={setLogin}
           keyboardType="phone-pad"
         />
 
