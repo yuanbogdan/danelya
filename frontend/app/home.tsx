@@ -40,7 +40,7 @@ export default function HomeScreen() {
       students: 1782,
       duration: '13 ч',
       image: require('../assets/images/3lesson.jpg'),
-      hasCertificate: false,
+      hasCertificate: true,
       isNew: false,
       isTrending: true,
     },
@@ -180,7 +180,7 @@ export default function HomeScreen() {
           onPress={() => setActiveTab('hits')}
         >
           <Text style={[styles.tabText, activeTab === 'hits' && styles.activeTabText]}>
-            Хиты Stepik
+            Хиты
           </Text>
         </TouchableOpacity>
       </View>

@@ -52,15 +52,27 @@ export default function StarsCourse() {
   if (showTest) {
     if (showResults) {
       return (
-        <View style={globalStyles.container}>
-          <Text style={globalStyles.title}>Результаты теста</Text>
-          <Text style={globalStyles.score}>
-            Ваш результат: {score} из {questions.length}
-          </Text>
-          <TouchableOpacity style={globalStyles.button} onPress={resetTest}>
-            <Text style={globalStyles.buttonText}>Пройти тест снова</Text>
-          </TouchableOpacity>
-        </View>
+        <SafeAreaView style={styles.safeArea}>
+          <View style={[styles.container, styles.resultsContainer]}>
+            <View style={styles.resultsContent}>
+              <Text style={styles.resultsTitle}>Результаты теста</Text>
+              <View style={styles.scoreContainer}>
+                <Text style={styles.scoreText}>
+                  Ваш результат:
+                </Text>
+                <Text style={styles.scoreNumber}>
+                  {score} из {questions.length}
+                </Text>
+                <Text style={styles.scorePercentage}>
+                  {Math.round((score / questions.length) * 100)}%
+                </Text>
+              </View>
+              <TouchableOpacity style={styles.retryButton} onPress={resetTest}>
+                <Text style={styles.retryButtonText}>Пройти тест снова</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </SafeAreaView>
       );
     }
 
@@ -148,8 +160,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   image: {
-    width: width - 32,
-    height: (width - 32) * 0.6,
+    width: '100%',
+    height: (width - 32) * 0.5,
     borderRadius: 12,
     marginBottom: 20,
   },
@@ -186,6 +198,66 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
+  },
+  resultsContainer: {
+    backgroundColor: '#fff',
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  resultsContent: {
+    width: '90%',
+    maxWidth: 400,
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  resultsTitle: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1A1A1A',
+    textAlign: 'center',
+    marginBottom: 24,
+  },
+  scoreContainer: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  scoreText: {
+    fontSize: 18,
+    color: '#666',
+    marginBottom: 8,
+  },
+  scoreNumber: {
+    fontSize: 48,
+    fontWeight: '700',
+    color: '#2D6A4F',
+    marginBottom: 8,
+  },
+  scorePercentage: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#2D6A4F',
+  },
+  retryButton: {
+    backgroundColor: '#2D6A4F',
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    width: '100%',
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 18,
     fontWeight: '600',
   },
 }); 
