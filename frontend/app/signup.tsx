@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, Text, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { validateEmail, validatePassword, validateName } from '../utils/validation';
 import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 export default function SignupScreen() {
   const [name, setName] = useState('');
@@ -39,23 +40,29 @@ export default function SignupScreen() {
 
   const handleSignup = async () => {
     if (!validateForm()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка валидации',
+        text2: 'Пожалуйста, проверьте введенные данные',
+        position: 'bottom',
+        visibilityTime: 4000,
+      });
       return;
     }
 
     setLoading(true);
     try {
       await register(email, password, name);
-      router.replace('/home')
-      Alert.alert(
-        'Успех',
-        'Регистрация успешно завершена',
-        [
-          {
-            text: 'OK',
-            onPress: () => router.replace('/home')
-          }
-        ]
-      );
+      Toast.show({
+        type: 'success',
+        text1: 'Успешная регистрация',
+        text2: 'Ваш аккаунт успешно создан!',
+        position: 'bottom',
+        visibilityTime: 3000,
+      });
+      setTimeout(() => {
+        router.replace('/home');
+      }, 1000);
     } catch (error: any) {
       let errorMessage = 'Произошла ошибка при регистрации';
       
@@ -71,7 +78,13 @@ export default function SignupScreen() {
           break;
       }
       
-      Alert.alert('Ошибка', errorMessage);
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка регистрации',
+        text2: errorMessage,
+        position: 'bottom',
+        visibilityTime: 4000,
+      });
     } finally {
       setLoading(false);
     }

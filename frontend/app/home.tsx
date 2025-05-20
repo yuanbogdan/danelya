@@ -1,7 +1,10 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TextInput, TouchableOpacity, SafeAreaView, FlatList, Alert } from 'react-native';
+import { router } from 'expo-router';
 import CourseCard from '../components/CourseCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
 
 export default function HomeScreen() {
   const allCourses = [
@@ -112,8 +115,39 @@ export default function HomeScreen() {
     return matchesTab;
   });
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userToken');
+      Toast.show({
+        type: 'success',
+        text1: 'Выход выполнен',
+        text2: 'Вы успешно вышли из аккаунта',
+        position: 'bottom',
+        visibilityTime: 2000,
+      });
+      setTimeout(() => {
+        router.replace('/login');
+      }, 1000);
+    } catch (error) {
+      console.error('Ошибка при выходе:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка',
+        text2: 'Не удалось выполнить выход',
+        position: 'bottom',
+        visibilityTime: 3000,
+      });
+    }
+  };
+
   const Header = () => (
     <>
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Курсы</Text>
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <Text style={styles.logoutButtonText}>Выйти</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -308,5 +342,30 @@ const styles = StyleSheet.create({
   emptyText: {
     color: '#666',
     fontSize: 16,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  logoutButton: {
+    backgroundColor: '#2D6A4F',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  logoutButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, Text, Alert, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import { useAuth } from '../hooks/useAuth';
 import { validateEmail } from '../utils/validation';
 import { router } from 'expo-router';
+import Toast from 'react-native-toast-message';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
@@ -29,13 +30,29 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!validateForm()) {
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка валидации',
+        text2: 'Пожалуйста, проверьте введенные данные',
+        position: 'bottom',
+        visibilityTime: 4000,
+      });
       return;
     }
 
     setLoading(true);
     try {
       await login(email, password);
-      router.replace('/home');
+      Toast.show({
+        type: 'success',
+        text1: 'Успешный вход',
+        text2: 'Добро пожаловать!',
+        position: 'bottom',
+        visibilityTime: 3000,
+      });
+      setTimeout(() => {
+        router.replace('/home');
+      }, 1000);
     } catch (error: any) {
       let errorMessage = 'Произошла ошибка при входе';
       
@@ -52,7 +69,13 @@ export default function LoginScreen() {
           break;
       }
       
-      Alert.alert('Ошибка', errorMessage);
+      Toast.show({
+        type: 'error',
+        text1: 'Ошибка входа',
+        text2: errorMessage,
+        position: 'bottom',
+        visibilityTime: 4000,
+      });
     } finally {
       setLoading(false);
     }
